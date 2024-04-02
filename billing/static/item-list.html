@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        
+            border-bottom: 1px solid rgb(210, 113, 132);
+            border-right: 1px solid rgb(210, 113, 132);
+        }
+
+        th {
+            background-color:  rgb(245, 219, 224);
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .delete-button {
+            background-color: #cb0d0d;
+            color: #fff;
+            border: none;
+            padding: 9px 15px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Bill Table</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>S_no</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Wanna Delete</th>
+            </tr>
+        </thead>
+        <tbody id="itemListBody">
+        </tbody>
+        <tfoot id="totalRow">
+        </tfoot>
+    </table>
+
+    <script>
+
+ async function deleteItem(itemId) {
+            try {
+                const response = await fetch(`/delete-item/${itemId}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    // If deletion is successful, re-render the item list
+                    fetchAndRenderItemList();
+                } else {
+                    console.error('Failed to delete item:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error deleting item:', error);
+            }
+        }
+
+        // Define fetchAndRenderItemList function in the global scope
+        async function fetchAndRenderItemList() {
+            try {
+                const response = await fetch('/itemlist');
+                const itemList = await response.json();
+                const itemListBody = document.getElementById('itemListBody');
+                const totalRow = document.getElementById('totalRow');
+
+                // Check if required elements exist
+                if (!itemListBody || !totalRow) {
+                    console.error('Required elements not found');
+                    return;
+                }
+
+                itemListBody.innerHTML = '';
+                let totalAmount = 0;
+
+                itemList.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.itemName}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.rate}</td>
+                        <td>${item.quantity * item.rate}</td>
+                        <td><button class="delete-button" onclick="deleteItem('${item._id}')">Delete</button></td>
+                    `;
+                    itemListBody.appendChild(row);
+                    totalAmount += item.quantity * item.rate;
+                });
+
+                // Add total row
+                const totalRowHTML = `
+                    <tr>
+                        <td colspan="4"></td>
+                        <td>Total:</td>
+                        <td>${totalAmount}</td>
+                    </tr>
+                `;
+                totalRow.innerHTML = totalRowHTML;
+            } catch (error) {
+                console.error('Error fetching item list:', error);
+            }
+        }
+
+        // Call fetchAndRenderItemList to render item list on page load
+        fetchAndRenderItemList();
+    </script>
+</body>
+</html>

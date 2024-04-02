@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>add items</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            
+            background-color: rgb(245, 219, 224);
+        }
+        nav{
+            margin: auto;
+            height: 5rem;
+            width: 98vw;           
+            background-color: gray;
+        }
+        nav h1{
+            font-size: xx-large;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .container{
+            width: 80vw;
+            align-items: center;
+            margin-left: 10vw;
+            height: 800px;
+            margin-top: 23px;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: aliceblue;
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .container form{
+            display: flex;
+            flex-direction: column;
+            width: 60vw;
+            background-color: rgb(245, 219, 224);
+            margin-left: 10vw;
+            margin-top: 23px;
+            border-radius: 8px;
+            padding: 8px;
+        }
+        .container form input, select {
+            padding: 6px;
+            margin: 6px;
+        }
+        .additembtn {
+            background-color: rgb(234, 57, 57);
+            padding: 8px;
+            margin: 6px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            margin-bottom: 23px;
+        }
+      
+        .billbtn{
+            background-color: rgb(234, 57, 57);
+            padding: 8px;
+            margin: 6px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            margin-bottom: 23px;
+            width: 555px;
+            margin-left: 110px;
+            margin-top: 40px;
+        }
+
+        .con{
+            width: 60vw;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>
+            Chitale Sweeets
+        </h1>
+    </nav>
+    <div class="container">
+        <form id="addItemForm">
+            <select id="itemName">
+                <option value="GulabJamun">Gulab Jamun</option>
+                <option value="Rasgulla">Rasgulla</option>
+                <option value="Barfi">Barfi</option>
+                <option value="Jalebi">Jalebi</option>
+                <option value="Ladoo">Ladoo</option>
+                <option value="Peda">Peda</option>
+                <option value="Halwa">Halwa</option>
+                <option value="KajuKatli">Kaju Katli</option>
+                <option value="Modak">Modak</option>
+                <option value="Imarti">Imarti</option>
+            </select>
+            
+            <input type="text" id="rate" placeholder="Enter Rate">
+            <input type="text" id="quantity" placeholder="Enter Quantity">
+            <input type="number" id="discount" placeholder="Discount">
+            <button class="additembtn" type="submit">Add item</button>
+        </form>
+
+        <div class="con">
+            <a href="/list">
+                <Button class="billbtn">
+                    Bill table
+                </Button>
+            </a>
+        </div>
+    </div>
+
+   
+
+    <script>
+        document.getElementById('addItemForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const itemName = document.getElementById("itemName").value;
+            const rate = document.getElementById("rate").value;
+            const quantity = document.getElementById("quantity").value;
+            const discount = document.getElementById("discount").value;
+    
+            const formData = {
+                itemName: itemName,
+                rate: rate,
+                quantity: quantity,
+                discount: discount
+            };
+
+
+            fetch('/additem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body :JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('item added')
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+    
+    
+</body>
+</html>

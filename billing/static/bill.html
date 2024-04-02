@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billing Page</title>
+<style>
+     body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    h2 {
+        text-align: center;
+        margin-top: 20px;
+    }
+    form {
+        width: 80%;
+        margin: auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="button"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    input[type="button"]:hover {
+        background-color: #0056b3;
+    }
+    table {
+        width: 80%;
+        margin: auto;
+        border-collapse: collapse;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 12px;
+    }
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .total {
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<h2>Billing Page</h2>
+
+<form id="billingForm">
+    <label for="itemName">Item Name:</label><br>
+    <select id="itemName">
+    </select><br><br>
+
+    <label for="rate">Rate:</label><br>
+    <input type="text" id="rate" readonly><br><br>
+
+    <label for="discount">Discount:</label><br>
+    <input type="text" id="discount" readonly><br><br>
+
+    <label for="quantity">Quantity:</label><br>
+    <input type="number" id="quantity" required><br><br>
+
+    <input type="button" value="Add Item" onclick="addItem()">
+</form>
+
+<table id="billTable">
+    <thead>
+        <tr>
+            <th>Item Name</th>
+            <th>Rate</th>
+            <th>Quantity</th>
+            <th>Discount</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody id="billItems">
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4" class="total">Total Bill</td>
+            <td id="totalAmount">0</td>
+        </tr>
+    </tfoot>
+</table>
+
+<script>
+    const itemList = [
+        { itemName: "Item 1", rate: 10, discount: 2 },
+        { itemName: "Item 2", rate: 20, discount: 4 },
+        { itemName: "Item 3", rate: 30, discount: 6 }
+    ];
+
+    const itemNameSelect = document.getElementById('itemName');
+    itemList.forEach(item => {
+        const option = document.createElement('option');
+        option.textContent = item.itemName;
+        itemNameSelect.appendChild(option);
+    });
+
+    function addItem() {
+        const itemName = document.getElementById('itemName').value;
+        const rate = parseFloat(document.getElementById('rate').value);
+        const discount = parseFloat(document.getElementById('discount').value);
+        const quantity = parseInt(document.getElementById('quantity').value);
+
+        const amount = (rate - discount) * quantity;
+
+        const tableBody = document.getElementById('billItems');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${itemName}</td>
+            <td>${rate}</td>
+            <td>${quantity}</td>
+            <td>${discount}</td>
+            <td>${amount}</td>
+        `;
+        tableBody.appendChild(newRow);
+
+        updateTotal(amount);
+    }
+
+    function updateTotal(amount) {
+        const totalAmountCell = document.getElementById('totalAmount');
+        const currentTotal = parseFloat(totalAmountCell.textContent);
+        totalAmountCell.textContent = currentTotal + amount;
+    }
+
+    document.getElementById('itemName').addEventListener('change', function() {
+        const selectedItem = this.value;
+        const selectedRate = itemList.find(item => item.itemName === selectedItem).rate;
+        const selectedDiscount = itemList.find(item => item.itemName === selectedItem).discount;
+        document.getElementById('rate').value = selectedRate;
+        document.getElementById('discount').value = selectedDiscount;
+    });
+</script>
+
+</body>
+</html>
